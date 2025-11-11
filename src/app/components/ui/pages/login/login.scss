@@ -1,0 +1,39 @@
+.container{
+    margin-top: 2.5rem;
+    max-width: 80%;
+    width: 400px;
+    height: 75%;
+    padding: 20px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    background-color: #fff;
+    justify-self: center;
+    .section-main{
+        width: 90%;
+        height: 90%;
+        margin: 0;
+        background-color: #eeeeee;
+        padding: 15px;
+        margin: 1px;
+        box-shadow: 5px 5px 15px rgba(0, 0, 0, 0.2);
+        color: black;
+        label{
+            display: block;
+            margin-bottom: 15px;
+            font-weight: bold;
+            font-size: medium;
+            margin: 10px;
+            padding: 5px;
+            background-color: #ccc;
+            box-shadow: 1px 1px 3px rgb(0, 0, 0 , 0.1);
+            .label-form{
+                margin: 0px;
+                background-color: aqua;
+                padding: 15px;
+                display: flex;
+                gap: 8px;
+            }
+        }
+    }   
+}
