@@ -23,12 +23,25 @@ private apiUrl = 'http://localhost:5254/api/Auth';
   }
 
   // 🔐 Login
-   login(credentials: LoginRequest): Observable<any> {
-    return this.http.post(`${this.apiUrl}/login`, credentials);
+  // login(credentials: LoginRequest): Observable<User> {
+  //  return this.http.post<User>(`${this.apiUrl}/login`, credentials)
+  //}
+
+    // 🔐 Login
+   login(credentials: LoginRequest): Observable<User> {
+    return this.http.post<User>(`${this.apiUrl}/login`, {
+      email: credentials.email,
+      password: credentials.password
+    }).pipe(
+      tap((value) => {
+        sessionStorage.setItem('Token', value.token);
+        sessionStorage.setItem('UserName', value.name);
+      })
+    )
   }
 
-  register(data: RegisterRequest): Observable<any> {
-    return this.http.post(`${this.apiUrl}/register`, data);
+  register(data: RegisterRequest): Observable<User> {
+    return this.http.post<User>(`${this.apiUrl}/register`, data);
   }
 
   // ✅ Verifica se está autenticado
