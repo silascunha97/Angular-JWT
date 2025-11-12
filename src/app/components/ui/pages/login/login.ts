@@ -9,13 +9,18 @@ import { L } from '@angular/cdk/keycodes';
   selector: 'app-login',
   standalone: false,
   templateUrl: './login.html',
-  styleUrls: ['./login.scss']
+  styleUrls: ['./login.scss'],
+  providers: [AuthServices]
 })
 export class Login implements OnInit {
   loginForm!: FormGroup;
   isRegisterMode = false; // false = Login, true = Registrar
 
-  constructor(private formBuilder: FormBuilder, private authServices: AuthServices) {}
+  constructor(
+    private formBuilder: FormBuilder, 
+    private authServices: AuthServices,
+    
+  ) {}
 
   ngOnInit(): void {
     this.loginForm = this.formBuilder.group({
@@ -44,9 +49,10 @@ export class Login implements OnInit {
       this.authServices.login(credentials).subscribe({
         next: (user) => {
           // The AuthServices handles setting the current user and localStorage
-          localStorage.setItem('currentUser', JSON.stringify(user));
+          localStorage.setItem('Token', JSON.stringify({token: user.token}));
+          localStorage.setItem('Token', JSON.stringify({token: user.name}));
           
-          console.log('Login successful:', user, localStorage.getItem('currentUser'));
+          console.log('Login successful:', user, localStorage.getItem('Token'));
         },
         error: (error) => {
           // Caso de erro no login

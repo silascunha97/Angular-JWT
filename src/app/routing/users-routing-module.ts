@@ -3,13 +3,15 @@ import { CommonModule } from '@angular/common';
 import { RouterModule, Routes } from '@angular/router';
 import { AuthGuard } from '../components/guards/auth/auth-guard';
 import { LoginGuard } from '../components/guards/login/login-guards-guard';
+import { App } from '../app';
 
 const routes: Routes = [
   {
     path: '',
-    redirectTo: '/home',
+    redirectTo: 'home',
     pathMatch: 'full'
   },
+
   {
     path: 'login',
     // Alterado de loadComponent para loadChildren para carregar um NgModule.
@@ -30,8 +32,9 @@ const routes: Routes = [
 @NgModule({
   declarations: [],
   imports: [
-    RouterModule.forRoot(routes),
+    RouterModule.forChild(routes),
     CommonModule
-  ]
+  ],
+  exports: [RouterModule]
 })
 export class UsersRoutingModule { }

@@ -7,5 +7,10 @@ import { Component, signal } from '@angular/core';
   styleUrl: './app.scss'
 })
 export class App {
-  protected readonly title = signal('Angular-JWT-Dotnet');
+  
+  
+  protected readonly title = signal('Criando tela de login com angular e JWT');
+
+
+
 }
