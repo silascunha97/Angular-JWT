@@ -1,0 +1,99 @@
+ <!-- Estrutura principal: Fundo escuro e conteúdo centralizado -->
+    <div class="min-h-screen flex items-center justify-center bg-gray-900 p-4">
+      
+      <!-- Utiliza o bloco @if para alternar entre os modos de Registro e Login -->
+      @if (isRegisterMode) {
+        <!-- CARD DE REGISTRO (DaisyUI) -->
+        <div class="card w-86 max-w-md shadow-2xl bg-base-100 rounded-2xl border border-primary/20 ">
+          <div class="card-body">
+            <h2 class="card-title text-3xl font-extrabold mb-6 justify-center text-primary">Criar Conta</h2>
+
+            <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="space-y-4 flex flex-col gap-4">
+              
+              <!-- Campo Nome Completo -->
+              <label class="form-control w-full">
+                <div class="label"><span class="label-text">Nome Completo</span></div>
+                <input type="text" formControlName="name" placeholder="Seu nome" 
+                       class=" input input-bordered input-primary w-full" 
+                       [class.input-error]="loginForm.get('name')?.invalid && loginForm.get('name')?.touched" />
+              </label>
+
+              <!-- Campo Email -->
+              <label class="form-control w-full">
+                <div class="label"><span class="label-text">Email</span></div>
+                <input type="email" formControlName="email" placeholder="email@exemplo.com" 
+                       class=" input input-bordered input-primary w-full" 
+                       [class.input-error]="loginForm.get('email')?.invalid && loginForm.get('email')?.touched" />
+              </label>
+
+              <!-- Campo Senha -->
+              <label class="form-control w-full">
+                <div class="label"><span class="label-text">Senha</span></div>
+                <input type="password" formControlName="password" placeholder="Mínimo 6 caracteres" 
+                       class=" input input-bordered input-primary w-full" 
+                       [class.input-error]="loginForm.get('password')?.invalid && loginForm.get('password')?.touched" />
+              </label>
+
+              <!-- Campo Confirmar Senha (Opcional, incluído para simular a validação) -->
+              <label class="form-control w-full">
+                <div class="label"><span class="label-text">Confirmar Senha</span></div>
+                <input type="password" formControlName="confirmPassword" placeholder="Repita a senha" 
+                       class=" input input-bordered w-full" />
+              </label>
+
+              <!-- Ações do Card -->
+              <div class="card-actions flex justify-between items-center m-15 pt-6">
+                <!-- Botão Voltar/Mudar para Login (Estilo link/ghost) -->
+                <button type="button" (click)="toggleMode()" class="btn btn-ghost text-sm text-primary hover:bg-primary/10">
+                  ← Voltar para Login
+                </button>
+                
+                <!-- Botão Registrar (Estilo primário) -->
+                <button type="submit" [disabled]="loginForm.invalid" class="btn btn-primary px-8">
+                  Registrar
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      } @else {
+        <!-- CARD DE LOGIN (DaisyUI) -->
+        <div class="card w-58 max-w-md shadow-2xl bg-base-100 rounded-2xl border border-secondary/20 ">
+          <div class="card-body">
+            <h2 class="card-title text-3xl font-extrabold mb-6 justify-center text-secondary">Acessar Conta</h2>
+
+            <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="space-y-4 flex flex-col gap-4">
+              
+              <!-- Campo Email -->
+              <label class="form-control w-full">
+                <div class="label"><span class="label-text">Email</span></div>
+                <input type="email" formControlName="email" placeholder="email@exemplo.com" 
+                       class=" input input-bordered input-secondary flex item-center w-full" 
+                       [class.input-error]="loginForm.get('email')?.invalid && loginForm.get('email')?.touched " />
+              </label>
+
+              <!-- Campo Senha -->
+              <label class="form-control w-full">
+                <div class="label"><span class="label-text">Senha</span></div>
+                <input type="password" formControlName="password" placeholder="Sua senha" 
+                       class=" input input-bordered input-secondary w-full" 
+                       [class.input-error]="loginForm.get('password')?.invalid && loginForm.get('password')?.touched" />
+              </label>
+
+              <!-- Ações do Card -->
+              <div class="card-actions flex justify-between items-center m-15 pt-6">
+                <!-- Botão Mudar para Registrar (Estilo link) -->
+                <button type="button" (click)="toggleMode()" class="btn btn-link text-sm text-secondary hover:text-secondary/80">
+                  Quero me Registrar
+                </button>
+
+                <!-- Botão Entrar (Estilo secundário) -->
+                <button type="submit"  class="btn btn-secondary px-8">
+                  Login
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      }
+    </div>
