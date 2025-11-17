@@ -1,99 +1,109 @@
- <!-- Estrutura principal: Fundo escuro e conteúdo centralizado -->
-    <div class="min-h-screen flex items-center justify-center bg-gray-900 p-4">
-      
-      <!-- Utiliza o bloco @if para alternar entre os modos de Registro e Login -->
-      @if (isRegisterMode) {
-        <!-- CARD DE REGISTRO (DaisyUI) -->
-        <div class="card w-86 max-w-md shadow-2xl bg-base-100 rounded-2xl border border-primary/20 ">
-          <div class="card-body">
-            <h2 class="card-title text-3xl font-extrabold mb-6 justify-center text-primary">Criar Conta</h2>
+<div class="flex justify-center items-center min-h-screen p-4 bg-base-200">
+    
+    <div class="card w-full max-w-sm bg-base-100 shadow-xl">
+        <div class="card-body">
+            
+            <h2 class="card-title text-2xl justify-center mb-6">
+                {{ isRegisterMode ? 'Criar Conta' : 'Acessar Conta' }}
+            </h2>
 
-            <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="space-y-4 flex flex-col gap-4">
-              
-              <!-- Campo Nome Completo -->
-              <label class="form-control w-full">
-                <div class="label"><span class="label-text">Nome Completo</span></div>
-                <input type="text" formControlName="name" placeholder="Seu nome" 
-                       class=" input input-bordered input-primary w-full" 
-                       [class.input-error]="loginForm.get('name')?.invalid && loginForm.get('name')?.touched" />
-              </label>
+            <div *ngIf="message" class="alert mb-4" 
+                 [ngClass]="{'alert-success': message.type === 'success', 'alert-error': message.type === 'error'}">
+                <svg *ngIf="message.type === 'success'" xmlns="http://www.w3.org/2000/svg" class="stroke-current shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                <svg *ngIf="message.type === 'error'" xmlns="http://www.w3.org/2000/svg" class="stroke-current shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                <span>{{ message.content }}</span>
+            </div>
 
-              <!-- Campo Email -->
-              <label class="form-control w-full">
-                <div class="label"><span class="label-text">Email</span></div>
-                <input type="email" formControlName="email" placeholder="email@exemplo.com" 
-                       class=" input input-bordered input-primary w-full" 
-                       [class.input-error]="loginForm.get('email')?.invalid && loginForm.get('email')?.touched" />
-              </label>
-
-              <!-- Campo Senha -->
-              <label class="form-control w-full">
-                <div class="label"><span class="label-text">Senha</span></div>
-                <input type="password" formControlName="password" placeholder="Mínimo 6 caracteres" 
-                       class=" input input-bordered input-primary w-full" 
-                       [class.input-error]="loginForm.get('password')?.invalid && loginForm.get('password')?.touched" />
-              </label>
-
-              <!-- Campo Confirmar Senha (Opcional, incluído para simular a validação) -->
-              <label class="form-control w-full">
-                <div class="label"><span class="label-text">Confirmar Senha</span></div>
-                <input type="password" formControlName="confirmPassword" placeholder="Repita a senha" 
-                       class=" input input-bordered w-full" />
-              </label>
-
-              <!-- Ações do Card -->
-              <div class="card-actions flex justify-between items-center m-15 pt-6">
-                <!-- Botão Voltar/Mudar para Login (Estilo link/ghost) -->
-                <button type="button" (click)="toggleMode()" class="btn btn-ghost text-sm text-primary hover:bg-primary/10">
-                  ← Voltar para Login
-                </button>
+            <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
                 
-                <!-- Botão Registrar (Estilo primário) -->
-                <button type="submit" [disabled]="loginForm.invalid" class="btn btn-primary px-8">
-                  Registrar
-                </button>
-              </div>
+                <div *ngIf="isRegisterMode" class="form-control mb-4">
+                    <label class="label">
+                        <span class="label-text">Nome Completo</span>
+                    </label>
+                    <label class="input input-bordered flex items-center gap-2">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor" class="w-4 h-4 opacity-70"><path d="M8 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6ZM12.735 14c.635-.747.995-1.745.995-2.784a4.4 4.4 0 0 0-4.4-4.4H7.67c-2.09 0-3.791 1.71-3.791 3.79s1.7 3.79 3.79 3.79h.363A4.4 4.4 0 0 0 12.735 14Z" /></svg>
+                        <input 
+                            type="text" 
+                            class="grow" 
+                            placeholder="Seu Nome" 
+                            formControlName="name"
+                        />
+                    </label>
+                    <div *ngIf="loginForm.get('name')?.invalid && (loginForm.get('name')?.dirty || loginForm.get('name')?.touched)" class="text-error text-sm mt-1">
+                        <span *ngIf="loginForm.get('name')?.errors?.['required']">Nome é obrigatório.</span>
+                        <span *ngIf="loginForm.get('name')?.errors?.['minlength']">Mínimo 3 caracteres.</span>
+                    </div>
+                </div>
+
+                <div class="form-control mb-4">
+                    <label class="label">
+                        <span class="label-text">Email</span>
+                    </label>
+                    <label class="input input-bordered flex items-center gap-2"
+                           [ngClass]="{'input-error': loginForm.get('email')?.invalid && (loginForm.get('email')?.dirty || loginForm.get('email')?.touched)}">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor" class="w-4 h-4 opacity-70">
+                            <path d="M2.5 3A1.5 1.5 0 0 0 1 4.5v.793c.026.009.052.016.077.025a1.5 1.5 0 0 0 .584.06c.007 0 .014 0 .021 0h12.637c.007 0 .014 0 .021 0a1.5 1.5 0 0 0 .584-.06c.025-.009.051-.016.077-.025V4.5A1.5 1.5 0 0 0 13.5 3h-11Z" />
+                            <path d="M15 6.954 8.978 9.86a2.25 2.25 0 0 1-1.956 0L1 6.954V11.5A1.5 1.5 0 0 0 2.5 13h11a1.5 1.5 0 0 0 1.5-1.5V6.954Z" />
+                        </svg>
+                        <input 
+                            type="email" 
+                            class="grow" 
+                            placeholder="seu@email.com" 
+                            formControlName="email"
+                        />
+                    </label>
+                    <div *ngIf="loginForm.get('email')?.invalid && (loginForm.get('email')?.dirty || loginForm.get('email')?.touched)" class="text-error text-sm mt-1">
+                        <span *ngIf="loginForm.get('email')?.errors?.['required']">Email é obrigatório.</span>
+                        <span *ngIf="loginForm.get('email')?.errors?.['email']">Email inválido.</span>
+                    </div>
+                </div>
+
+                <div class="form-control mb-6">
+                    <label class="label">
+                        <span class="label-text">Senha</span>
+                    </label>
+                    <label class="input input-bordered flex items-center gap-2"
+                           [ngClass]="{'input-error': loginForm.get('password')?.invalid && (loginForm.get('password')?.dirty || loginForm.get('password')?.touched)}">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor" class="w-4 h-4 opacity-70">
+                            <path fill-rule="evenodd" d="M14 6a2 2 0 0 1-2 2h-1v1a3 3 0 1 1-6 0V8H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v2ZM4 4v2h8V4H4Z" clip-rule="evenodd" />
+                        </svg>
+                        <input 
+                            type="password" 
+                            class="grow" 
+                            placeholder="Mínimo 6 caracteres" 
+                            formControlName="password"
+                        />
+                    </label>
+                    <div *ngIf="loginForm.get('password')?.invalid && (loginForm.get('password')?.dirty || loginForm.get('password')?.touched)" class="text-error text-sm mt-1">
+                        <span *ngIf="loginForm.get('password')?.errors?.['required']">Senha é obrigatória.</span>
+                        <span *ngIf="loginForm.get('password')?.errors?.['minlength']">Mínimo 6 caracteres.</span>
+                    </div>
+                    
+                    <label *ngIf="!isRegisterMode" class="label">
+                        <a routerLink="/reset-password" class="label-text-alt link link-hover">Esqueceu a senha?</a>
+                    </label>
+                </div>
+
+                <div class="card-actions justify-end">
+                    <button type="submit" 
+                            class="btn btn-primary w-full">
+                        {{ isRegisterMode ? 'Cadastrar' : 'Entrar' }}
+                    </button>
+                </div>
+
             </form>
-          </div>
+
+            <div class="text-center mt-4">
+                <p class="text-sm">
+                    <span *ngIf="!isRegisterMode">Não tem uma conta?</span>
+                    <span *ngIf="isRegisterMode">Já tem uma conta?</span>
+                    <a (click)="toggleMode()" class="link link-hover text-primary ml-1">
+                        {{ isRegisterMode ? 'Fazer Login' : 'Cadastre-se' }}
+                    </a>
+                </p>
+            </div>
+
         </div>
-      } @else {
-        <!-- CARD DE LOGIN (DaisyUI) -->
-        <div class="card w-58 max-w-md shadow-2xl bg-base-100 rounded-2xl border border-secondary/20 ">
-          <div class="card-body">
-            <h2 class="card-title text-3xl font-extrabold mb-6 justify-center text-secondary">Acessar Conta</h2>
-
-            <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="space-y-4 flex flex-col gap-4">
-              
-              <!-- Campo Email -->
-              <label class="form-control w-full">
-                <div class="label"><span class="label-text">Email</span></div>
-                <input type="email" formControlName="email" placeholder="email@exemplo.com" 
-                       class=" input input-bordered input-secondary flex item-center w-full" 
-                       [class.input-error]="loginForm.get('email')?.invalid && loginForm.get('email')?.touched " />
-              </label>
-
-              <!-- Campo Senha -->
-              <label class="form-control w-full">
-                <div class="label"><span class="label-text">Senha</span></div>
-                <input type="password" formControlName="password" placeholder="Sua senha" 
-                       class=" input input-bordered input-secondary w-full" 
-                       [class.input-error]="loginForm.get('password')?.invalid && loginForm.get('password')?.touched" />
-              </label>
-
-              <!-- Ações do Card -->
-              <div class="card-actions flex justify-between items-center m-15 pt-6">
-                <!-- Botão Mudar para Registrar (Estilo link) -->
-                <button type="button" (click)="toggleMode()" class="btn btn-link text-sm text-secondary hover:text-secondary/80">
-                  Quero me Registrar
-                </button>
-
-                <!-- Botão Entrar (Estilo secundário) -->
-                <button type="submit"  class="btn btn-secondary px-8">
-                  Login
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
-      }
     </div>
+    
+</div>

@@ -6,6 +6,7 @@ import { LoginRequest } from '../../interfaces/LoginRequest';
 import { User } from '../../interfaces/user-interfaces';
 import { CommonModule, NgIfContext } from '@angular/common';
 import { RouterModule } from '@angular/router';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-login',
@@ -23,14 +24,19 @@ export class LoginComponent implements OnInit {
   loginForm!: FormGroup;
   isRegisterMode = false; // false = Login, true = Registrar
 loginTpl: TemplateRef<NgIfContext<boolean>> | null | undefined;
+message: any;
+senha: any;
+email: any;
 
   constructor(
     private formBuilder: FormBuilder, 
     private authServices: AuthService,
-    
+    private router: Router
   ) {}
 
   ngOnInit(): void {
+    
+
     this.loginForm = this.formBuilder.group({
       name: ['', [Validators.required, Validators.minLength(3)]],
       email: ['', [Validators.required, Validators.email]],
@@ -43,55 +49,60 @@ loginTpl: TemplateRef<NgIfContext<boolean>> | null | undefined;
   }
 
   onSubmit(): void {
-    //console.log('Form submitted:', this.loginForm.value);
-    // A validação deve verificar se o formulário é INVÁLIDO e parar a execução.
-    if (this.loginForm.invalid) {
-      // Opcional: Marcar campos como "tocados" para exibir erros na UI
-      this.loginForm.markAllAsTouched();
-      return;
-    }
+    this.message = null; // Limpa qualquer mensagem anterior
+    
+    if (this.loginForm.invalid) {
+      this.loginForm.markAllAsTouched();
+      // Opcional: Mostrar uma mensagem de erro de validação local
+      this.message = { type: 'error', content: 'Por favor, preencha todos os campos corretamente.' };
+      return;
+    }
 
-    if (!this.isRegisterMode) {
-      // Modo Login
-      const credentials: LoginRequest = {
-        email: this.loginForm.value.email,
-        password: this.loginForm.value.password
-      };
-      
-      this.authServices.login(credentials).subscribe({
-        next: (user: any) => {
-          // A responsabilidade de salvar o usuário já está no AuthService.
-          // Não é necessário fazer isso aqui novamente.
-          console.log('Login successful:', user);
-          // TODO: Redirecionar o usuário para a página principal (dashboard, home, etc.)
-        },
-        error: (error: any) => {
-          console.error('Login failed:', error);
-          // TODO: Mostrar uma mensagem de erro para o usuário (ex: "Usuário ou senha inválidos")
-        }
-      });
-    } else {
-      // Modo Registro
-      const registerCredentials: RegisterRequest = {
-        name: this.loginForm.value.name,
-        email: this.loginForm.value.email,
-        password: this.loginForm.value.password
-      };
-      this.authServices.register(
-        { username: this.loginForm.value.name, password: this.loginForm.value.password },
-        { username: this.loginForm.value.name, password: this.loginForm.value.password }
-      ).subscribe({
-        next: (user: User) => {
-          console.log('Registration successful:', user);
-          // TODO: Mostrar mensagem de sucesso para o usuário.
-          this.toggleMode(); // Switch to login mode after successful registration
-          this.loginForm.reset(); // Limpar o formulário
-        },
-        error: (error: any) => {
-          console.error('Registration failed:', error);
-          // TODO: Mostrar uma mensagem de erro para o usuário (ex: "Email já cadastrado")
-        }
-      });
-    }
-  }
+    if (!this.isRegisterMode) {
+      // Modo Login
+      // ... (código de credenciais)
+
+      this.authServices.login({ email: this.loginForm.value.email, password: this.loginForm.value.password }).subscribe({
+        next: (user: any) => {
+          console.log('Login successful:', user);
+          this.router.navigate(['/home']); // Exemplo de redirecionamento
+          // 👈 ATRIBUIÇÃO DA MENSAGEM DE SUCESSO
+          this.message = { type: 'success', content: 'Login realizado com sucesso!' };
+          
+          // TODO: Redirecionar o usuário
+        },
+        error: (error: any) => {
+          console.error('Login failed:', error);
+          
+          // 👈 ATRIBUIÇÃO DA MENSAGEM DE ERRO
+          const errorMessage = error.error?.message || 'Erro ao tentar fazer login. Verifique suas credenciais.';
+          this.message = { type: 'error', content: errorMessage };
+        }
+      });
+    } else {
+      // Modo Registro
+      // ... (código de registro)
+      
+      this.authServices.register(
+        { username: this.loginForm.value.name, password: this.loginForm.value.password },
+      ).subscribe({
+        next: (user: User) => {
+          console.log('Registration successful:', user);
+          
+          // 👈 ATRIBUIÇÃO DA MENSAGEM DE SUCESSO
+          this.message = { type: 'success', content: 'Registro efetuado com sucesso! Agora, faça seu login.' };
+
+          this.toggleMode(); // Switch to login mode
+          this.loginForm.reset(); 
+        },
+        error: (error: any) => {
+          console.error('Registration failed:', error);
+          
+          // 👈 ATRIBUIÇÃO DA MENSAGEM DE ERRO
+          const errorMessage = error.error?.message || 'Erro ao registrar. Tente outro email.';
+          this.message = { type: 'error', content: errorMessage };
+        }
+      });
+    }
+  }
 }
